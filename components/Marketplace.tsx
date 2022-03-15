@@ -15,33 +15,37 @@ export const Marketplace = () => {
   }, [])
 
   const loadNFTs = async () => {
-    const provider = new ethers.providers.JsonRpcProvider()
+    try {
+      const provider = new ethers.providers.JsonRpcProvider()
 
-    const marketContract = NFTMarket__factory.connect(process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS as string, provider)
+      const marketContract = NFTMarket__factory.connect(process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS as string, provider)
 
-    const allMarketListedItemsRaw = await marketContract.fetchMarketAllItems()
+      const allMarketListedItemsRaw = await marketContract.fetchMarketAllItems()
+      console.log(allMarketListedItemsRaw)
 
-    const allMarketListedItems = await Promise.all(
-      allMarketListedItemsRaw.map(async ({ tokenId, price, seller, owner }) => {
-        const tokenUri = await marketContract.tokenURI(tokenId)
+      const allMarketListedItems = await Promise.all(
+        allMarketListedItemsRaw.map(async ({ tokenId, price, seller, owner }) => {
+          const tokenUri = await marketContract.tokenURI(tokenId)
 
-        const response = await axios.get<ITokenUri>(tokenUri)
+          const response = await axios.get<ITokenUri>(tokenUri)
 
-        const { name, imageUrl, description } = response?.data
+          const { name, imageUrl, description } = response?.data
 
-        return {
-          tokenId: tokenId.toString(),
-          price: ethers.utils.formatUnits(price.toString(), "ether"),
-          seller,
-          owner,
-          name,
-          imageUrl,
-          description,
-        }
-      })
-    )
-
-    setItems(allMarketListedItems)
+          return {
+            tokenId: tokenId.toString(),
+            price: ethers.utils.formatUnits(price.toString(), "ether"),
+            seller,
+            owner,
+            name,
+            imageUrl,
+            description,
+          }
+        })
+      )
+      setItems(allMarketListedItems)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return (

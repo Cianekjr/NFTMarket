@@ -1,5 +1,5 @@
 {
-  "name": "hardhat-project",
+  "name": "nftmarket",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

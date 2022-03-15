@@ -1,5 +1,6 @@
 import type { AppProps } from "next/app"
 import { useState } from "react"
+import Head from "next/head"
 
 import { Box, Toolbar, CssBaseline } from "@mui/material"
 import { ThemeProvider, createTheme } from "@mui/material/styles"
@@ -27,6 +28,12 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ThemeProvider theme={theme}>
+      <Head>
+        <title>NFT Market</title>
+        <meta name="description" content="NFT Marketplace is a place for trading ethereum nfts" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+      </Head>
+
       <CssBaseline />
       <Box sx={{ display: "flex" }}>
         <TheHeader toggleDrawer={toggleDrawer} />

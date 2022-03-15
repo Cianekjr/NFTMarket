@@ -7,7 +7,7 @@ import { List, Divider, Typography, ListItemButton, ListItemIcon, ListItem, List
 
 const navigationItems = [
   {
-    title: "Nextplace",
+    title: "NFTMarket",
     children: [
       {
         title: "Home",
