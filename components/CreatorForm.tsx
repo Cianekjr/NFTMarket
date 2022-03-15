@@ -13,6 +13,7 @@ import { CreatorFileInput } from "@components/CreatorFileInput"
 
 // eslint-disable-next-line camelcase
 import { NFTMarket__factory } from "@typechain"
+import { ITokenUri } from "@types"
 import { ethers } from "ethers"
 
 const ipfsClient = ipfsHttpClient({ url: "https://ipfs.infura.io:5001/api/v0" })
@@ -20,10 +21,8 @@ const ipfsClient = ipfsHttpClient({ url: "https://ipfs.infura.io:5001/api/v0" })
 const schema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
-  fileUrl: z.string().min(1),
+  imageUrl: z.string().min(1),
 })
-
-type ICreatorForm = z.infer<typeof schema>
 
 export const CreatorForm = () => {
   const { push } = useRouter()
@@ -34,20 +33,19 @@ export const CreatorForm = () => {
     handleSubmit,
     setValue,
     watch,
-  } = useForm<ICreatorForm>({
+  } = useForm<ITokenUri>({
     defaultValues: {
       name: "",
       description: "",
-      fileUrl: "",
+      imageUrl: "",
     },
     mode: "onTouched",
     resolver: zodResolver(schema),
   })
 
-  const fileUrl = watch("fileUrl")
+  const imageUrl = watch("imageUrl")
 
-  const onSubmit: SubmitHandler<ICreatorForm> = async (data) => {
-    console.log("SUBMIT")
+  const onSubmit: SubmitHandler<ITokenUri> = async (data) => {
     try {
       const added = await ipfsClient.add(JSON.stringify(data))
       const url = `https://ipfs.infura.io/ipfs/${added.path}`
@@ -70,9 +68,9 @@ export const CreatorForm = () => {
   const handleImageChange = async (file: File) => {
     try {
       const added = await ipfsClient.add(file)
-      const fileUrl = `https://ipfs.infura.io/ipfs/${added.path}`
+      const imageUrl = `https://ipfs.infura.io/ipfs/${added.path}`
 
-      setValue("fileUrl", fileUrl)
+      setValue("imageUrl", imageUrl)
     } catch (e) {
       console.error(e)
     }
@@ -111,10 +109,10 @@ export const CreatorForm = () => {
       </Grid>
       <Grid item xs={6}>
         <Paper sx={{ p: 2, height: "300px", position: "relative" }}>
-          {fileUrl ? (
-            <Image src={fileUrl} layout="fill" alt="uploaded image" objectFit="contain" />
+          {imageUrl ? (
+            <Image src={imageUrl} layout="fill" alt="uploaded image" objectFit="contain" />
           ) : (
-            <CreatorFileInput handleImageChange={handleImageChange} isError={!!errors.fileUrl} />
+            <CreatorFileInput handleImageChange={handleImageChange} isError={!!errors.imageUrl} />
           )}
         </Paper>
       </Grid>

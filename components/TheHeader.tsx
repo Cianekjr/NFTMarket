@@ -1,5 +1,12 @@
-import { AppBar, Toolbar, IconButton, Typography } from "@mui/material"
-import { Menu as MenuIcon } from "@mui/icons-material"
+import { useState, useEffect } from "react"
+import Web3Modal from "web3modal"
+import { ethers } from "ethers"
+
+import { AppBar, Toolbar, IconButton, Button, Box } from "@mui/material"
+import { LoadingButton } from "@mui/lab"
+import { Menu as MenuIcon, Person as PersonIcon, AccountBalanceWallet as AccountBalanceWalletIcon } from "@mui/icons-material"
+import { ClientOnly } from "@components/ClientOnly"
+import Link from "next/link"
 
 interface Props {
   toggleDrawer: () => void
@@ -7,6 +14,40 @@ interface Props {
 
 export const TheHeader = (props: Props) => {
   const { toggleDrawer } = props
+  const [isLoading, setIsLoading] = useState(false)
+  const [walletAddress, setWalletAddress] = useState("")
+
+  const loadUserWallet = async () => {
+    if (window.ethereum) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const connectedAccounts = await provider.listAccounts()
+
+      if (connectedAccounts.some((acc) => acc.toLowerCase() === window.ethereum.selectedAddress)) {
+        const web3modal = new Web3Modal()
+        const connection = await web3modal.connect()
+
+        setWalletAddress(connection.selectedAddress)
+      }
+    }
+  }
+
+  useEffect(() => {
+    loadUserWallet()
+  }, [])
+
+  const handleConnect = async () => {
+    try {
+      setIsLoading(true)
+      const web3modal = new Web3Modal()
+      const connection = await web3modal.connect()
+
+      setWalletAddress(connection.selectedAddress)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <AppBar
@@ -20,9 +61,29 @@ export const TheHeader = (props: Props) => {
         <IconButton onClick={toggleDrawer}>
           <MenuIcon fontSize="large" />
         </IconButton>
-        <Typography variant="h6" noWrap component="div">
-          Mini variant drawer
-        </Typography>
+        <Box sx={{ marginLeft: "auto" }}>
+          <ClientOnly>
+            {walletAddress ? (
+              <Link href="/profile" passHref>
+                <Button component="a" variant="contained" startIcon={<PersonIcon />} color="error" size="large">
+                  Profile
+                </Button>
+              </Link>
+            ) : (
+              <LoadingButton
+                loading={isLoading}
+                loadingPosition="start"
+                startIcon={<AccountBalanceWalletIcon />}
+                variant="contained"
+                color="error"
+                size="large"
+                onClick={handleConnect}
+              >
+                Connect
+              </LoadingButton>
+            )}
+          </ClientOnly>
+        </Box>
       </Toolbar>
     </AppBar>
   )

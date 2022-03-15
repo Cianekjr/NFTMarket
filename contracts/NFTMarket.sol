@@ -85,6 +85,29 @@ contract NFTMarket is ReentrancyGuard, ERC721URIStorage {
     return items;
   }
 
+  function fetchMarketAllListedItems() public view returns (MarketItem[] memory) {
+    uint256 totalItemCount = _id.current();
+    uint256 itemCount = 0;
+    uint256 currentIndex = 0;
+
+    for (uint256 i = 0; i < totalItemCount; i++) {
+      if (idToMarketItem[i].isListed) {
+        itemCount++;
+      }
+    }
+
+    MarketItem[] memory items = new MarketItem[](itemCount);
+
+    for (uint256 i = 0; i < totalItemCount; i++) {
+      if (idToMarketItem[i].isListed) {
+        items[currentIndex] = idToMarketItem[i];
+        currentIndex++;
+      }
+    }
+
+    return items;
+  }
+
   function fetchMyAllItems() public view returns (MarketItem[] memory) {
     uint256 totalItemCount = _id.current();
     uint256 itemCount = 0;

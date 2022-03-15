@@ -1,23 +1,19 @@
-import Button from "@mui/material/Button"
-import Card from "@mui/material/Card"
-import CardHeader from "@mui/material/CardHeader"
-import CardMedia from "@mui/material/CardMedia"
-import CardContent from "@mui/material/CardContent"
-import CardActions from "@mui/material/CardActions"
-import Typography from "@mui/material/Typography"
-import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket"
+import { Button, Card, CardHeader, CardMedia, CardContent, CardActions, Typography } from "@mui/material"
+import { ShoppingBasket as ShoppingBasketIcon } from "@mui/icons-material"
 
 interface IItemCard {
-  title: string
+  name: string
   imageUrl: string
   description: string
 }
 
-export const ItemCard = ({ title, imageUrl, description }: IItemCard) => {
+export const ItemCard = (props: IItemCard) => {
+  const { name, imageUrl, description } = props
+
   return (
     <Card sx={{ width: "100%" }}>
-      <CardHeader title={title} />
-      <CardMedia component="img" height="194" image={imageUrl} alt={title} />
+      <CardHeader title={name} />
+      <CardMedia component="img" height="194" image={imageUrl} alt={name} />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
           {description}

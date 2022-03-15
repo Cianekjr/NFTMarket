@@ -9,6 +9,7 @@ const nextConfig = {
   webpack: (config) => {
     config.resolve.alias["@components"] = path.resolve(__dirname, "./components")
     config.resolve.alias["@typechain"] = path.resolve(__dirname, "./typechain")
+    config.resolve.alias["@types"] = path.resolve(__dirname, "./types")
     return config
   },
 }

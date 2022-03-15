@@ -32,6 +32,9 @@
       ],
       "@typechain": [
         "typechain"
+      ],
+      "@types": [
+        "types"
       ]
     }
   },

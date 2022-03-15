@@ -1,6 +1,6 @@
 import { useState, DragEvent, ChangeEvent } from "react"
 
-import { Input, Button, Card, Paper, Typography } from "@mui/material"
+import { Input, Button, Card, Paper, Typography, Theme } from "@mui/material"
 import { CloudUpload as CloudUploadIcon } from "@mui/icons-material"
 import { visuallyHidden } from "@mui/utils"
 
@@ -71,7 +71,7 @@ export const CreatorFileInput = (props: Props) => {
             justifyContent: "center",
             alignItems: "center",
             border: "4px dashed",
-            borderColor: isError ? "red" : "transparent",
+            borderColor: (theme: Theme) => (isError ? theme.palette.error.main : "transparent"),
             height: "100%",
             p: 2,
             opacity: isDragging ? 0.5 : 1,
