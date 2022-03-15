@@ -5,27 +5,37 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "hardhat run scripts/deploy.ts --network localhost"
+    "deploy": "hardhat run scripts/deploy.ts --network localhost",
+    "postinstall": "hardhat compile"
   },
   "dependencies": {
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
     "@fontsource/roboto": "^4.5.3",
+    "@hookform/resolvers": "^2.8.8",
     "@mui/icons-material": "^5.5.0",
     "@mui/material": "^5.5.0",
-    "axios": "^0.26.1",
-    "ethers": "^5.5.4",
-    "ipfs-http-client": "50.1.2",
-    "next": "12.1.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "web3modal": "^1.9.5"
-  },
-  "devDependencies": {
+    "@mui/utils": "^5.4.4",
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts": "^4.5.0",
+    "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
+    "ethereum-waffle": "^4.0.0-alpha.0",
+    "ethers": "^5.6.0",
+    "hardhat": "^2.9.1",
+    "hardhat-gas-reporter": "^1.0.8",
+    "ipfs-http-client": "50.1.2",
+    "next": "12.1.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-hook-form": "^7.28.0",
+    "react-perfect-scrollbar": "^1.5.8",
+    "web3modal": "^1.9.5",
+    "zod": "^3.13.4"
+  },
+  "devDependencies": {
     "@typechain/ethers-v5": "^7.2.0",
     "@typechain/hardhat": "^2.3.1",
     "@types/chai": "^4.3.0",
@@ -35,19 +45,16 @@
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "chai": "^4.3.6",
-    "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
     "eslint-config-next": "12.1.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^16.0.3",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-promise": "^5.2.0",
-    "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.5.4",
-    "hardhat": "^2.9.1",
-    "hardhat-gas-reporter": "^1.0.8",
     "prettier": "^2.5.1",
     "prettier-plugin-solidity": "^1.0.0-beta.13",
     "solhint": "^3.3.7",
@@ -55,5 +62,8 @@
     "ts-node": "^10.7.0",
     "typechain": "^5.2.0",
     "typescript": "^4.6.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

@@ -1,9 +1,8 @@
 import type { NextPage } from "next"
 import Head from "next/head"
 
-import Grid from "@mui/material/Grid"
-import Box from "@mui/material/Box"
-import { ItemCard } from "../components/ItemCard/ItemCard"
+import { Box } from "@mui/material"
+import { ItemCard } from "@components/ItemCard"
 
 const items = [
   {
@@ -48,14 +47,6 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        dwawaddwawda
-        {/* <Grid container spacing={{ xs: 2, md: 3 }}>
-          {items.map(item => (
-            <Grid item key={item.title} xs>
-              <ItemCard {...item} />
-            </Grid>
-          ))}
-        </Grid> */}
         <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(300px, 1fr))" gap={2}>
           {items.map((item) => (
             <Box key={item.title}>

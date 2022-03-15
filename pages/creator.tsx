@@ -1,53 +1,9 @@
-import { useState } from "react"
 import type { NextPage } from "next"
 import Head from "next/head"
-import { useRouter } from "next/router"
-import { create as ipfsHttpClient } from "ipfs-http-client"
-import Web3Modal from "web3modal"
-import Input from "@mui/material/Input"
-import Button from "@mui/material/Button"
-import DeleteIcon from "@mui/icons-material/Delete"
-import SendIcon from "@mui/icons-material/Send"
-import Image from "next/image"
-import { NFT__factory, NFTMarket__factory, NFT, NFTMarket } from "../typechain"
-import { ethers } from "ethers"
 
-const client = ipfsHttpClient({ url: "https://ipfs.infura.io:5001/api/v0" })
+import { CreatorForm } from "@components/CreatorForm"
 
 const Creator: NextPage = () => {
-  const [fileUrl, setFileUrl] = useState("")
-  const router = useRouter()
-
-  const onChange = async (e) => {
-    const file = e.target.files[0]
-    try {
-      const added = await client.add(file)
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`
-      setFileUrl(url)
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  const createNft = async () => {
-    const web3modal = new Web3Modal()
-    const connection = await web3modal.connect()
-    const provider = new ethers.providers.Web3Provider(connection)
-    const signer = provider.getSigner()
-
-    // const tokenContract = new ethers.Contract(process.env.NEXT_PUBLIC_NFT_ADDRESS || "", JSON.stringify(NFT__factory.abi), signer) as NFT
-    // const transaction = await tokenContract.createToken(fileUrl)
-
-    // const tx = await transaction.wait()
-    // console.log(tx, tokenContract, process.env.NEXT_PUBLIC_NFT_ADDRESS)
-
-    // if (tx) {
-    //   // const event = tx.events[0]
-    //   // const value = event.args[2]
-    //   // const tokenId = value.toNumber()
-    // }
-  }
-
   return (
     <div>
       <Head>
@@ -57,22 +13,7 @@ const Creator: NextPage = () => {
       </Head>
 
       <main>
-        Creator
-        <div>{fileUrl && <Image src={fileUrl} alt="Picture of the author" width={500} height={500} />}</div>
-        <div>
-          <Button variant="outlined" startIcon={<DeleteIcon />}>
-            Delete
-          </Button>
-          <label htmlFor="icon-button-file">
-            <Input id="icon-button-file" type="file" sx={{ display: "none" }} onChange={onChange} />
-            <Button variant="contained" endIcon={<SendIcon />} aria-label="upload picture" component="span">
-              Send
-            </Button>
-          </label>
-        </div>
-        <Button variant="contained" endIcon={<SendIcon />} aria-label="create nft" onClick={createNft}>
-          mintToken
-        </Button>
+        <CreatorForm />
       </main>
     </div>
   )

@@ -1,48 +1,83 @@
 import { expect } from "chai"
 import { ethers } from "hardhat"
+import { NFTMarket } from "../typechain"
 
 describe("NFT Market", function () {
-  it("Should create and execute market sales", async function () {
+  let market: NFTMarket
+
+  beforeEach(async function () {
     const Market = await ethers.getContractFactory("NFTMarket")
-    const market = await Market.deploy()
+    market = await Market.deploy()
     await market.deployed()
-    const marketAddress = market.address
+  })
 
-    const NFT = await ethers.getContractFactory("NFT")
-    const nft = await NFT.deploy(marketAddress)
-    await nft.deployed()
-    const nftContractAddress = nft.address
-
-    const listingPrice = (await market.getMarketListingPrice()).toString()
-
-    const auctionPrice = ethers.utils.parseUnits("100", "ether")
-
-    await nft.createToken("https://www.mytokenlocation.com")
-    await nft.createToken("https://www.mytokenlocation2.com")
-
-    await market.createSalesOffer(nftContractAddress, 1, auctionPrice, { value: listingPrice })
-    await market.createSalesOffer(nftContractAddress, 2, auctionPrice, { value: listingPrice })
-
-    const buyerAddress = (await ethers.getSigners())[1]
-
-    await market.connect(buyerAddress).createPurchaseOffer(nftContractAddress, 1, { value: auctionPrice })
+  it("Should track minted token", async function () {
+    await market.createToken("https://www.nft.com/1")
+    await market.createToken("https://www.nft.com/2")
 
     const items = await market.fetchMarketAllItems()
 
-    const readableItems = await Promise.all(
-      items.map(async (i) => {
-        const tokenUri = await nft.tokenURI(i.tokenId)
-        const item = {
-          tokenId: i.tokenId.toString(),
-          price: i.price.toString(),
-          seller: i.seller,
-          owner: i.owner,
-          tokenUri,
-        }
-        return item
-      })
-    )
+    expect(items.length).to.equal(2)
+  })
 
-    console.log(readableItems)
+  it("Should mint token and assign the owner", async function () {
+    const { value: tokenId } = await market.createToken("https://www.mytokenlocation.com")
+
+    const item = await market.getItem(tokenId)
+
+    const signerAddress = await ethers.provider.getSigner(0).getAddress()
+
+    expect(item.owner).to.equal(signerAddress)
+  })
+
+  it("Should be able to put item up for sale", async function () {
+    const { value: tokenId } = await market.createToken("https://www.nft.com/1")
+
+    const itemPrev = await market.getItem(tokenId)
+    expect(itemPrev.isListed).to.equal(false)
+
+    const ITEM_PRICE = "1.0"
+
+    await market.createSalesOffer(tokenId, ethers.utils.parseEther(ITEM_PRICE))
+
+    const itemNext = await market.getItem(tokenId)
+    expect(itemNext.isListed).to.equal(true)
+
+    expect(ethers.utils.formatEther(itemNext.price)).to.equal(ITEM_PRICE)
+  })
+
+  it("Should be able to buy token", async function () {
+    const signer1 = ethers.provider.getSigner(1)
+    const signer1Market = market.connect(signer1)
+    const { value: tokenId } = await signer1Market.createToken("https://www.nft.com/1")
+
+    const ITEM_PRICE = "1.0"
+    await signer1Market.createSalesOffer(tokenId, ethers.utils.parseEther(ITEM_PRICE))
+
+    const signer2 = ethers.provider.getSigner(2)
+    const signer2Address = await signer2.getAddress()
+    const signer2Market = market.connect(signer2)
+
+    await signer2Market.createPurchaseOffer(tokenId, { value: ethers.utils.parseEther(ITEM_PRICE) })
+
+    const item = await market.getItem(tokenId)
+
+    expect(item.isListed).to.equal(false)
+    expect(item.owner).to.equal(signer2Address)
+  })
+
+  it("Should return all my items", async function () {
+    const signer1Market = market.connect(ethers.provider.getSigner(1))
+    await signer1Market.createToken("https://www.nft.com/1")
+    await signer1Market.createToken("https://www.nft.com/2")
+
+    const signer2Market = market.connect(ethers.provider.getSigner(2))
+    await signer2Market.createToken("https://www.nft.com/3")
+
+    const signer1MarketItems = await signer1Market.fetchMyAllItems()
+    expect(signer1MarketItems.length).to.equal(2)
+
+    const signer2MarketItems = await signer2Market.fetchMyAllItems()
+    expect(signer2MarketItems.length).to.equal(1)
   })
 })
