@@ -1,28 +1,30 @@
+import Link from "next/link"
 import { Button, Card, CardHeader, CardMedia, CardContent, CardActions, Typography } from "@mui/material"
 import { ShoppingBasket as ShoppingBasketIcon } from "@mui/icons-material"
+import { IMarketItem } from "@types"
 
 interface IItemCard {
-  name: string
-  imageUrl: string
-  description: string
+  item: IMarketItem
 }
 
 export const ItemCard = (props: IItemCard) => {
-  const { name, imageUrl, description } = props
+  const { item } = props
 
   return (
     <Card sx={{ width: "100%" }}>
-      <CardHeader title={name} />
-      <CardMedia component="img" height="194" image={imageUrl} alt={name} />
+      <CardHeader title={item.name} />
+      <CardMedia component="img" height="194" image={item.imageUrl} alt={item.name} />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {description}
+          {item.description}
         </Typography>
       </CardContent>
       <CardActions>
-        <Button aria-label="buy" size="large" variant="contained" endIcon={<ShoppingBasketIcon />} sx={{ width: "100%" }}>
-          Buy
-        </Button>
+        <Link href={`items/${item.tokenId}`} passHref>
+          <Button component="a" aria-label="buy" size="large" variant="contained" endIcon={<ShoppingBasketIcon />} sx={{ width: "100%" }}>
+            Open
+          </Button>
+        </Link>
       </CardActions>
     </Card>
   )

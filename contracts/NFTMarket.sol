@@ -13,7 +13,6 @@ contract NFTMarket is ReentrancyGuard, ERC721URIStorage {
   struct MarketItem {
     uint256 tokenId;
     address nftContract;
-    address payable seller;
     address payable owner;
     uint256 price;
     bool isListed;
@@ -33,7 +32,7 @@ contract NFTMarket is ReentrancyGuard, ERC721URIStorage {
     _setTokenURI(tokenId, tokenURI);
     setApprovalForAll(address(this), true);
 
-    idToMarketItem[tokenId] = MarketItem(tokenId, address(this), payable(0), payable(msg.sender), 0, false);
+    idToMarketItem[tokenId] = MarketItem(tokenId, address(this), payable(msg.sender), 0, false);
 
     _id.increment();
 
@@ -49,7 +48,7 @@ contract NFTMarket is ReentrancyGuard, ERC721URIStorage {
 
     require(itemToSell.owner == msg.sender, "You are not the owner of this token");
     require(price > 0, "Price must be greater than 0");
-    require(itemToSell.isListed == false, "This token is already listed");
+    require(!itemToSell.isListed, "This token is already listed");
 
     itemToSell.price = price;
     itemToSell.isListed = true;
@@ -57,18 +56,39 @@ contract NFTMarket is ReentrancyGuard, ERC721URIStorage {
     IERC721(address(this)).transferFrom(msg.sender, address(this), tokenId);
   }
 
+  function changeSalesOfferPrice(uint256 tokenId, uint256 newPrice) public payable nonReentrant {
+    MarketItem storage itemToSell = idToMarketItem[tokenId];
+
+    require(itemToSell.owner == msg.sender, "You are not the owner of this token");
+    require(newPrice > 0, "Price must be greater than 0");
+    require(itemToSell.isListed, "This token is not listed");
+
+    itemToSell.price = newPrice;
+  }
+
+  function cancelSalesOffer(uint256 tokenId) public payable nonReentrant {
+    MarketItem storage itemToCancel = idToMarketItem[tokenId];
+
+    require(itemToCancel.owner == msg.sender, "You are not the owner of this token");
+    require(itemToCancel.isListed, "This token is not listed");
+
+    itemToCancel.price = 0;
+    itemToCancel.isListed = false;
+
+    IERC721(address(this)).transferFrom(address(this), msg.sender, tokenId);
+  }
+
   function createPurchaseOffer(uint256 tokenId) public payable nonReentrant {
     MarketItem storage itemToBuy = idToMarketItem[tokenId];
 
     require(itemToBuy.isListed == true, "This token is not listed");
     require(itemToBuy.price == msg.value, "Price does not match");
-    require(itemToBuy.seller != msg.sender, "You are the seller of this token");
+    require(itemToBuy.owner != msg.sender, "You are the owner of this token");
 
-    itemToBuy.seller.transfer(msg.value);
+    itemToBuy.owner.transfer(msg.value);
     IERC721(address(this)).transferFrom(address(this), msg.sender, tokenId);
 
     itemToBuy.owner = payable(msg.sender);
-    itemToBuy.seller = payable(0);
     itemToBuy.isListed = false;
     itemToBuy.price = 0;
 
@@ -85,7 +105,7 @@ contract NFTMarket is ReentrancyGuard, ERC721URIStorage {
     return items;
   }
 
-  function fetchMarketAllListedItems() public view returns (MarketItem[] memory) {
+  function fetchMarketListedItems() public view returns (MarketItem[] memory) {
     uint256 totalItemCount = _id.current();
     uint256 itemCount = 0;
     uint256 currentIndex = 0;
@@ -108,13 +128,17 @@ contract NFTMarket is ReentrancyGuard, ERC721URIStorage {
     return items;
   }
 
-  function fetchMyAllItems() public view returns (MarketItem[] memory) {
+  function fetchItem(uint256 tokenId) public view returns (MarketItem memory item) {
+    return idToMarketItem[tokenId];
+  }
+
+  function fetchOwnedItems(address owner) public view returns (MarketItem[] memory) {
     uint256 totalItemCount = _id.current();
     uint256 itemCount = 0;
     uint256 currentIndex = 0;
 
     for (uint256 i = 0; i < totalItemCount; i++) {
-      if (idToMarketItem[i].owner == msg.sender) {
+      if (idToMarketItem[i].owner == owner) {
         itemCount++;
       }
     }
@@ -122,7 +146,7 @@ contract NFTMarket is ReentrancyGuard, ERC721URIStorage {
     MarketItem[] memory items = new MarketItem[](itemCount);
 
     for (uint256 i = 0; i < totalItemCount; i++) {
-      if (idToMarketItem[i].owner == msg.sender) {
+      if (idToMarketItem[i].owner == owner) {
         items[currentIndex] = idToMarketItem[i];
         currentIndex++;
       }

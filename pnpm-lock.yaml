@@ -45,6 +45,7 @@ specifiers:
   react: 17.0.2
   react-dom: 17.0.2
   react-hook-form: ^7.28.0
+  react-if: ^4.1.1
   react-perfect-scrollbar: ^1.5.8
   solhint: ^3.3.7
   solidity-coverage: ^0.7.20
@@ -78,6 +79,7 @@ dependencies:
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-hook-form: 7.28.0_react@17.0.2
+  react-if: 4.1.1_react@17.0.2
   react-perfect-scrollbar: 1.5.8_react-dom@17.0.2+react@17.0.2
   web3modal: 1.9.5
   zod: 3.13.4
@@ -9046,6 +9048,15 @@ packages:
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17
+    dependencies:
+      react: 17.0.2
+    dev: false
+
+  /react-if/4.1.1_react@17.0.2:
+    resolution: {integrity: sha512-frzHswesRqVVJ2XcGRoLyTvlB2yneib4R/FCqTG8AqBQnFdLNhqNODfzEA84EQZ0XwBAVe82Oe567kxaVmwj5w==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      react: ^16.x || ^17.x
     dependencies:
       react: 17.0.2
     dev: false

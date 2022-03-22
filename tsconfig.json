@@ -36,14 +36,15 @@
       "@types": [
         "types"
       ]
-    }
+    },
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "./scripts",
-    "./typechain"
+    "./typechain",
+    "./test"
   ],
   "exclude": [
     "node_modules"

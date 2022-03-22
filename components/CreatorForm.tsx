@@ -67,6 +67,13 @@ export const CreatorForm = () => {
 
   const handleImageChange = async (file: File) => {
     try {
+      const img = new window.Image()
+      img.src = window.URL.createObjectURL(file)
+      img.onload = () => {
+        console.log({ img })
+        return true
+      }
+
       const added = await ipfsClient.add(file)
       const imageUrl = `https://ipfs.infura.io/ipfs/${added.path}`
 

@@ -2,10 +2,9 @@ import { useState, useEffect } from "react"
 import Web3Modal from "web3modal"
 import { ethers } from "ethers"
 
-import { AppBar, Toolbar, IconButton, Button, Box } from "@mui/material"
+import { AppBar, Toolbar, IconButton, Button, Box, NoSsr } from "@mui/material"
 import { LoadingButton } from "@mui/lab"
 import { Menu as MenuIcon, Person as PersonIcon, AccountBalanceWallet as AccountBalanceWalletIcon } from "@mui/icons-material"
-import { ClientOnly } from "@components/ClientOnly"
 import Link from "next/link"
 
 interface Props {
@@ -62,7 +61,7 @@ export const TheHeader = (props: Props) => {
           <MenuIcon fontSize="large" />
         </IconButton>
         <Box sx={{ marginLeft: "auto" }}>
-          <ClientOnly>
+          <NoSsr defer>
             {walletAddress ? (
               <Link href="/profile" passHref>
                 <Button component="a" variant="contained" startIcon={<PersonIcon />} color="error" size="large">
@@ -82,7 +81,7 @@ export const TheHeader = (props: Props) => {
                 Connect
               </LoadingButton>
             )}
-          </ClientOnly>
+          </NoSsr>
         </Box>
       </Toolbar>
     </AppBar>

@@ -8,7 +8,7 @@ import { IMarketItem, ITokenUri } from "@types"
 import { Box } from "@mui/material"
 import { ItemCard } from "@components/ItemCard"
 
-export const Marketplace = () => {
+export const MarketplaceGrid = () => {
   const [items, setItems] = useState<IMarketItem[]>([])
   useEffect(() => {
     loadNFTs()
@@ -20,11 +20,10 @@ export const Marketplace = () => {
 
       const marketContract = NFTMarket__factory.connect(process.env.NEXT_PUBLIC_NFT_MARKET_ADDRESS as string, provider)
 
-      const allMarketListedItemsRaw = await marketContract.fetchMarketAllItems()
-      console.log(allMarketListedItemsRaw)
+      const allMarketListedItemsRaw = await marketContract.fetchMarketListedItems()
 
       const allMarketListedItems = await Promise.all(
-        allMarketListedItemsRaw.map(async ({ tokenId, price, seller, owner }) => {
+        allMarketListedItemsRaw.map(async ({ tokenId, price, owner, isListed }) => {
           const tokenUri = await marketContract.tokenURI(tokenId)
 
           const response = await axios.get<ITokenUri>(tokenUri)
@@ -34,11 +33,11 @@ export const Marketplace = () => {
           return {
             tokenId: tokenId.toString(),
             price: ethers.utils.formatUnits(price.toString(), "ether"),
-            seller,
             owner,
             name,
             imageUrl,
             description,
+            isListed,
           }
         })
       )
@@ -52,7 +51,7 @@ export const Marketplace = () => {
     <Box display="grid" gridTemplateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={2}>
       {items.map((item) => (
         <Box key={item.tokenId}>
-          <ItemCard {...item} />
+          <ItemCard item={item} />
         </Box>
       ))}
     </Box>

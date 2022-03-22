@@ -1,9 +1,9 @@
 import type { NextPage } from "next"
 import Head from "next/head"
 
-import { Marketplace } from "@components/Marketplace"
+import { MarketplaceGrid } from "@components/MarketplaceGrid"
 
-const MarketplacePage: NextPage = () => {
+const Marketplace: NextPage = () => {
   return (
     <div>
       <Head>
@@ -12,10 +12,10 @@ const MarketplacePage: NextPage = () => {
       </Head>
 
       <main>
-        <Marketplace />
+        <MarketplaceGrid />
       </main>
     </div>
   )
 }
 
-export default MarketplacePage
+export default Marketplace
