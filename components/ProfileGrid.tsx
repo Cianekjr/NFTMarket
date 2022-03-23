@@ -5,12 +5,13 @@ import axios from "axios"
 // eslint-disable-next-line camelcase
 import { NFTMarket__factory } from "@typechain"
 import { IMarketItem, ITokenUri } from "@types"
+import { If, Then, Else } from "react-if"
 
 import { Box, Typography } from "@mui/material"
-import { ItemCard } from "@components/ItemCard"
+import { ItemCard, ItemCardSkeleton } from "@components/ItemCard"
 
 export const ProfileGrid = () => {
-  const [ownedItems, setOwnedItems] = useState<IMarketItem[]>([])
+  const [ownedItems, setOwnedItems] = useState<IMarketItem[] | null>(null)
 
   useEffect(() => {
     loadNFTs()
@@ -53,24 +54,33 @@ export const ProfileGrid = () => {
 
   return (
     <Box>
-      <Typography variant="h4">My items</Typography>
-      <Box
-        display="grid"
-        gap={2}
-        sx={(theme) => ({
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          [theme.breakpoints.up("sm")]: {
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          },
-        })}
-      >
-        {ownedItems.map((item) => (
-          <Box key={item.tokenId}>
-            <ItemCard item={item} />
+      <Typography variant="h4" sx={{ mb: 2 }}>
+        My items
+      </Typography>
+      <If condition={!ownedItems || (ownedItems && ownedItems.length > 0)}>
+        <Then>
+          <Box
+            display="grid"
+            gap={2}
+            sx={(theme) => ({
+              display: "grid",
+              gridTemplateColumns: "1fr",
+              [theme.breakpoints.up("sm")]: {
+                gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+              },
+            })}
+          >
+            {ownedItems
+              ? ownedItems.map((item) => <ItemCard item={item} key={item.tokenId} />)
+              : [1, 2, 3, 4, 5].map((item) => <ItemCardSkeleton key={item} />)}
           </Box>
-        ))}
-      </Box>
+        </Then>
+        <Else>
+          <Typography variant="h3" color="text.secondary">
+            You don&apos;t own any items
+          </Typography>
+        </Else>
+      </If>
     </Box>
   )
 }

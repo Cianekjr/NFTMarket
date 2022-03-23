@@ -168,7 +168,7 @@ export const ItemProfile = (props: IItemProfileProps) => {
                     noValidate
                     autoComplete="off"
                     onSubmit={handleSubmit(item.isListed ? changeSalesPrice : handlePutOnSales)}
-                    sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                    sx={{ mb: 1 }}
                   >
                     <TextField
                       required
@@ -182,16 +182,18 @@ export const ItemProfile = (props: IItemProfileProps) => {
                       {...register("price")}
                       error={!!errors.price}
                       helperText={errors.price?.message}
-                      sx={{ my: 0, mr: 2 }}
+                      fullWidth
+                      sx={{}}
                     />
                     <LoadingButton
                       loading={isLoading}
                       loadingPosition="start"
                       startIcon={item.isListed ? <CurrencyExchangeIcon /> : <SellIcon />}
                       variant="contained"
-                      color="error"
+                      color="secondary"
                       size="large"
                       type="submit"
+                      fullWidth
                       aria-label={item.isListed ? "change price" : "List now"}
                     >
                       {item.isListed ? "Change price" : "List now"}

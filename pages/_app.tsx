@@ -15,6 +15,13 @@ import "@fontsource/roboto/700.css"
 
 const theme = createTheme({
   direction: "ltr",
+  components: {
+    MuiSkeleton: {
+      defaultProps: {
+        animation: "wave",
+      },
+    },
+  },
 })
 
 function MyApp({ Component, pageProps }: AppProps) {

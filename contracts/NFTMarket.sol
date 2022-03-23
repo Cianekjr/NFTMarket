@@ -53,6 +53,8 @@ contract NFTMarket is ReentrancyGuard, ERC721URIStorage {
     itemToSell.price = price;
     itemToSell.isListed = true;
 
+    setApprovalForAll(address(this), true);
+
     IERC721(address(this)).transferFrom(msg.sender, address(this), tokenId);
   }
 
